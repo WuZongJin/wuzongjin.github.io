@@ -1,0 +1,770 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+
+
+  <meta name="keywords" content="数据结构," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: ''
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> 数据结构实习2迷宫问题 // Dps's Blog </title>
+</head>
+
+<body>
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Dps's Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<div class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            <i class="menu-item-icon icon-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            <i class="menu-item-icon icon-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              数据结构实习2迷宫问题
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2017-11-24
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; 分类于
+            
+              <a href="/categories/数据结构/">数据结构</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <h3 id="2-9迷宫问题"><a href="#2-9迷宫问题" class="headerlink" title="2.9迷宫问题"></a>2.9迷宫问题</h3><p>【问题描述】以一个m*n的长方形方阵表示迷宫，0和1分别表示迷宫中的通路和障碍。设计一个程序，对任意设定的迷宫，求出一条从入口到出口的通路，或得出没有通路的结论。<br>具体思路：用二维数组存储迷宫数据，将走迷宫的步骤作为一个栈，如果在该位置上四周有能走的路则将该位置入<br>栈，如果没有通路则退栈，当栈为空时则表示该迷宫无解。<br>接下来是代码的实现</p>
+<pre><code>#include&lt;iostream&gt;
+using namespace std;
+const int MazeSize = 6;
+typedef struct
+{
+    bool walked;//是否走过
+    int dir;//方向 ：1为右，2为上，3为左，4为下。
+    int num;//用来表示迷宫，0表示可走，1表示为墙
+}MazeElem;//迷宫上的元素
+typedef struct
+{
+   MazeElem map[MazeSize][MazeSize];
+}Maze;//迷宫
+
+typedef struct NodeMaze
+{
+    int r;
+    int c;
+}NodeMaze,*LinkMaze;//走迷宫的步骤
+const int STACK_INIT_SIZE = 20;
+const int STACKINCREMENT = 10;
+typedef struct
+{
+    LinkMaze base;
+    LinkMaze top;
+    int size;
+}Stack;//走迷宫步骤的栈
+//初始化栈
+void InitStack(Stack &amp;s)
+{
+    s.base = (LinkMaze)malloc(STACK_INIT_SIZE * sizeof(NodeMaze));
+    if (!s.base)exit(OVERFLOW);
+    s.top = s.base;
+    s.size = STACK_INIT_SIZE;
+}
+//入栈
+int Push(Stack &amp;s,NodeMaze e)
+{
+    if (s.top - s.base &gt;= s.size)
+    {
+        s.base = (LinkMaze)realloc(s.base, (s.size + STACKINCREMENT) * sizeof(NodeMaze));
+        if (!s.base)exit(OVERFLOW);
+        s.top = s.base + s.size;
+        s.size += STACKINCREMENT;
+    }
+    *s.top++ = e;
+    return 1;
+}
+//出栈
+int Pop(Stack &amp;s)
+{
+    if (s.top == s.base)return 0;
+    *--s.top;
+    return 1;
+}
+//是否有通路，并且返回该方向
+int Pass(Maze &amp;maze, NodeMaze e)
+{
+    int col = e.c;
+    int row = e.r;
+    if (maze.map[row][col + 1].num == 0&amp;&amp; !maze.map[row][col + 1].walked)
+    {
+        maze.map[row][col].dir = 1;
+        return 1;
+    }
+    else if (maze.map[row - 1][col].num == 0&amp;&amp; !maze.map[row - 1][col].walked)
+    {
+        maze.map[row][col].dir = 2;
+        return 2;
+    }
+    else if (maze.map[row][col - 1].num == 0 &amp;&amp; !maze.map[row][col - 1].walked)
+    {
+        maze.map[row][col].dir = 3;
+        return 3;
+    }
+    else if (maze.map[row + 1][col].num == 0 &amp;&amp; !maze.map[row + 1][col].walked)
+    {
+        maze.map[row][col].dir = 4;
+        return 4;
+    }
+    else return 0;
+}
+//将该点标识为已经走过了
+void FootPrint(Maze &amp;maze,NodeMaze e)
+{
+    maze.map[e.r][e.c].walked = true;
+}
+//是否到达指定的地点
+bool Same(NodeMaze e, NodeMaze end)
+{
+    if (e.c == end.c&amp;&amp;e.r == end.r)
+        return true;
+    else return false;
+}
+//是否为空栈
+bool StackEmpty(Stack s)
+{
+    return (s.top == s.base);
+}
+//利用该点的dir返回下一个点
+NodeMaze NextPos(Maze maze,NodeMaze e)
+{
+    NodeMaze s;
+    s.c = e.c;
+    s.r = e.r;
+    int col = e.c;
+    int row = e.r;
+    if ( maze.map[row][col].dir == 1)
+        s.c++;
+    else if (maze.map[row][col].dir == 2)
+        s.r--;
+    else if (maze.map[row][col].dir == 3)
+        s.c--;
+    else if (maze.map[row][col].dir == 4)
+        s.r++;
+    return s;
+}
+//得到栈的栈顶
+NodeMaze GetTop(Stack s)
+{
+    return *(s.top - 1);
+}
+//迷宫演示
+void show(Maze maze,NodeMaze e)
+{
+    for (int i = 0; i &lt; MazeSize; i++)
+    {
+        for (int j = 0; j &lt; MazeSize; j++)
+        {
+            if (maze.map[i][j].num == 1)printf(&quot;#&quot;);//墙用#表示
+            else if (i == e.r&amp;&amp;j == e.c)printf(&quot;@&quot;);//人用@表示
+            else if (maze.map[i][j].num == 0)printf(&quot; &quot;);//路用空格表示
+        }
+        printf(&quot;\n&quot;);
+    }
+}
+//初始化迷宫
+//得到的迷宫如下
+/*
+  ######
+    #  #
+  #    #
+  ### ##
+  #
+  ######
+  */
+void InitMaze(Maze &amp;maze)
+{
+    for (int i = 0; i &lt; MazeSize; i++)
+    {
+        for (int j = 0; j &lt; MazeSize; j++)
+        {
+            maze.map[i][j].walked = false;
+            maze.map[i][j].dir = 1;
+            maze.map[i][j].num = 1;
+        }
+    }
+    maze.map[1][0].num = 0;
+    maze.map[1][1].num = 0;
+    maze.map[1][3].num = 0;
+    maze.map[1][4].num = 0;
+    maze.map[2][1].num = 0;
+    maze.map[2][2].num = 0;
+    maze.map[2][3].num = 0;
+    maze.map[2][4].num = 0;
+    maze.map[3][3].num = 0;
+    maze.map[4][1].num = 0;
+    maze.map[4][2].num = 0;
+    maze.map[4][3].num = 0;
+    maze.map[4][4].num = 0;
+    maze.map[4][5].num = 0;
+
+}
+//遍历迷宫路径直到找到终点
+int MazePath(Maze &amp;maze, NodeMaze start, NodeMaze end)
+{
+    Stack s;//定义一个栈用来存放步骤
+    InitStack(s);
+    NodeMaze curpos;//现在的位置
+    curpos = start;
+    int curstep = 1;//第几步
+    bool found = false;//是否找到终点
+    do
+    {
+        if (Pass(maze, curpos))//如果存在通路
+        {
+            FootPrint(maze,curpos);//标记该点
+            Push(s, curpos);//入栈
+            curpos = NextPos(maze,curpos);//下一个点
+            curstep++;
+        }
+        else//如果不存在通路
+        {
+            if (!StackEmpty(s))//栈不为空
+            {
+                FootPrint(maze, curpos);//标记该点
+                curpos = GetTop(s);//得到栈顶
+                Pop(s);//退栈
+                curstep--;
+            }
+        }
+        system(&quot;cls&quot;);//清屏
+        show(maze,curpos);
+        _sleep(500);
+        if (Same(curpos, end))found = true;//如果到达终点
+    } while (!StackEmpty(s) &amp;&amp; !found);
+    if (!found)printf(&quot;No Way!!&quot;);
+    return 1;
+}
+//主函数
+int main()
+{
+    Maze maze;
+    InitMaze(maze);
+    NodeMaze start, end;//设定起始点和终点
+    start.c = 0;
+    start.r = 1;
+    end.c = 5;
+    end.r = 4;
+    MazePath(maze, start, end);
+}
+</code></pre><p>改程序演示如下<br><img src="/images/2-9result.png" alt="2-9result.png"></p>
+<p>你可以在 <code>void InitMaze(Maze &amp;maze)</code> 函数中改变迷宫进行尝试！</p>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/数据结构/"> #数据结构 </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/29/算法之数的排序/">算法之数的排序</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/23/数据结构-实习1-6/">数据结构 实习1.6</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    
+
+    
+      <div class="comments" id="comments">
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="John Doe" />
+          <p class="site-author-name">John Doe</p>
+        </div>
+        <p class="site-description motion-element"></p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9迷宫问题"><span class="nav-number">1.</span> <span class="nav-text">2.9迷宫问题</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2018
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">John Doe</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.3"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.3"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.3" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.3" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+
+
+
+  
+  
+
+</body>
+</html>
