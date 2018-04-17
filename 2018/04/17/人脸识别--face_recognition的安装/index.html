@@ -20,7 +20,7 @@
 
 
 
-  <meta name="keywords" content="数据结构," />
+  <meta name="keywords" content="人脸识别," />
 
 
 
@@ -43,7 +43,7 @@
 
 
 
-  <title> 数据结构实习2迷宫问题 // Dps's Blog </title>
+  <title> win10下安装face_recogniton // Dps's Blog </title>
 </head>
 
 <body>
@@ -154,7 +154,7 @@
           
           
             
-              数据结构实习2迷宫问题
+              win10下安装face_recogniton
             
           
         </h1>
@@ -162,14 +162,14 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2017-11-24
+          发表于 2018-04-17
         </span>
 
         
           <span class="post-category">
             &nbsp; | &nbsp; 分类于
             
-              <a href="/categories/数据结构/">数据结构</a>
+              <a href="/categories/人脸识别/">人脸识别</a>
 
               
               
@@ -190,230 +190,9 @@
       
 
       
-        <h3 id="2-9迷宫问题"><a href="#2-9迷宫问题" class="headerlink" title="2.9迷宫问题"></a>2.9迷宫问题</h3><p>【问题描述】以一个m*n的长方形方阵表示迷宫，0和1分别表示迷宫中的通路和障碍。设计一个程序，对任意设定的迷宫，求出一条从入口到出口的通路，或得出没有通路的结论。<br>具体思路：用二维数组存储迷宫数据，将走迷宫的步骤作为一个栈，如果在该位置上四周有能走的路则将该位置入<br>栈，如果没有通路则退栈，当栈为空时则表示该迷宫无解。<br>接下来是代码的实现</p>
-<pre><code>#include&lt;iostream&gt;
-using namespace std;
-const int MazeSize = 6;
-typedef struct
-{
-    bool walked;//是否走过
-    int dir;//方向 ：1为右，2为上，3为左，4为下。
-    int num;//用来表示迷宫，0表示可走，1表示为墙
-}MazeElem;//迷宫上的元素
-typedef struct
-{
-   MazeElem map[MazeSize][MazeSize];
-}Maze;//迷宫
-
-typedef struct NodeMaze
-{
-    int r;
-    int c;
-}NodeMaze,*LinkMaze;//走迷宫的步骤
-const int STACK_INIT_SIZE = 20;
-const int STACKINCREMENT = 10;
-typedef struct
-{
-    LinkMaze base;
-    LinkMaze top;
-    int size;
-}Stack;//走迷宫步骤的栈
-//初始化栈
-void InitStack(Stack &amp;s)
-{
-    s.base = (LinkMaze)malloc(STACK_INIT_SIZE * sizeof(NodeMaze));
-    if (!s.base)exit(OVERFLOW);
-    s.top = s.base;
-    s.size = STACK_INIT_SIZE;
-}
-//入栈
-int Push(Stack &amp;s,NodeMaze e)
-{
-    if (s.top - s.base &gt;= s.size)
-    {
-        s.base = (LinkMaze)realloc(s.base, (s.size + STACKINCREMENT) * sizeof(NodeMaze));
-        if (!s.base)exit(OVERFLOW);
-        s.top = s.base + s.size;
-        s.size += STACKINCREMENT;
-    }
-    *s.top++ = e;
-    return 1;
-}
-//出栈
-int Pop(Stack &amp;s)
-{
-    if (s.top == s.base)return 0;
-    *--s.top;
-    return 1;
-}
-//是否有通路，并且返回该方向
-int Pass(Maze &amp;maze, NodeMaze e)
-{
-    int col = e.c;
-    int row = e.r;
-    if (maze.map[row][col + 1].num == 0&amp;&amp; !maze.map[row][col + 1].walked)
-    {
-        maze.map[row][col].dir = 1;
-        return 1;
-    }
-    else if (maze.map[row - 1][col].num == 0&amp;&amp; !maze.map[row - 1][col].walked)
-    {
-        maze.map[row][col].dir = 2;
-        return 2;
-    }
-    else if (maze.map[row][col - 1].num == 0 &amp;&amp; !maze.map[row][col - 1].walked)
-    {
-        maze.map[row][col].dir = 3;
-        return 3;
-    }
-    else if (maze.map[row + 1][col].num == 0 &amp;&amp; !maze.map[row + 1][col].walked)
-    {
-        maze.map[row][col].dir = 4;
-        return 4;
-    }
-    else return 0;
-}
-//将该点标识为已经走过了
-void FootPrint(Maze &amp;maze,NodeMaze e)
-{
-    maze.map[e.r][e.c].walked = true;
-}
-//是否到达指定的地点
-bool Same(NodeMaze e, NodeMaze end)
-{
-    if (e.c == end.c&amp;&amp;e.r == end.r)
-        return true;
-    else return false;
-}
-//是否为空栈
-bool StackEmpty(Stack s)
-{
-    return (s.top == s.base);
-}
-//利用该点的dir返回下一个点
-NodeMaze NextPos(Maze maze,NodeMaze e)
-{
-    NodeMaze s;
-    s.c = e.c;
-    s.r = e.r;
-    int col = e.c;
-    int row = e.r;
-    if ( maze.map[row][col].dir == 1)
-        s.c++;
-    else if (maze.map[row][col].dir == 2)
-        s.r--;
-    else if (maze.map[row][col].dir == 3)
-        s.c--;
-    else if (maze.map[row][col].dir == 4)
-        s.r++;
-    return s;
-}
-//得到栈的栈顶
-NodeMaze GetTop(Stack s)
-{
-    return *(s.top - 1);
-}
-//迷宫演示
-void show(Maze maze,NodeMaze e)
-{
-    for (int i = 0; i &lt; MazeSize; i++)
-    {
-        for (int j = 0; j &lt; MazeSize; j++)
-        {
-            if (maze.map[i][j].num == 1)printf(&quot;#&quot;);//墙用#表示
-            else if (i == e.r&amp;&amp;j == e.c)printf(&quot;@&quot;);//人用@表示
-            else if (maze.map[i][j].num == 0)printf(&quot; &quot;);//路用空格表示
-        }
-        printf(&quot;\n&quot;);
-    }
-}
-//初始化迷宫
-//得到的迷宫如下
-/*
-  ######
-    #  #
-  #    #
-  ### ##
-  #
-  ######
-  */
-void InitMaze(Maze &amp;maze)
-{
-    for (int i = 0; i &lt; MazeSize; i++)
-    {
-        for (int j = 0; j &lt; MazeSize; j++)
-        {
-            maze.map[i][j].walked = false;
-            maze.map[i][j].dir = 1;
-            maze.map[i][j].num = 1;
-        }
-    }
-    maze.map[1][0].num = 0;
-    maze.map[1][1].num = 0;
-    maze.map[1][3].num = 0;
-    maze.map[1][4].num = 0;
-    maze.map[2][1].num = 0;
-    maze.map[2][2].num = 0;
-    maze.map[2][3].num = 0;
-    maze.map[2][4].num = 0;
-    maze.map[3][3].num = 0;
-    maze.map[4][1].num = 0;
-    maze.map[4][2].num = 0;
-    maze.map[4][3].num = 0;
-    maze.map[4][4].num = 0;
-    maze.map[4][5].num = 0;
-
-}
-//遍历迷宫路径直到找到终点
-int MazePath(Maze &amp;maze, NodeMaze start, NodeMaze end)
-{
-    Stack s;//定义一个栈用来存放步骤
-    InitStack(s);
-    NodeMaze curpos;//现在的位置
-    curpos = start;
-    int curstep = 1;//第几步
-    bool found = false;//是否找到终点
-    do
-    {
-        if (Pass(maze, curpos))//如果存在通路
-        {
-            FootPrint(maze,curpos);//标记该点
-            Push(s, curpos);//入栈
-            curpos = NextPos(maze,curpos);//下一个点
-            curstep++;
-        }
-        else//如果不存在通路
-        {
-            if (!StackEmpty(s))//栈不为空
-            {
-                FootPrint(maze, curpos);//标记该点
-                curpos = GetTop(s);//得到栈顶
-                Pop(s);//退栈
-                curstep--;
-            }
-        }
-        system(&quot;cls&quot;);//清屏
-        show(maze,curpos);
-        _sleep(500);
-        if (Same(curpos, end))found = true;//如果到达终点
-    } while (!StackEmpty(s) &amp;&amp; !found);
-    if (!found)printf(&quot;No Way!!&quot;);
-    return 1;
-}
-//主函数
-int main()
-{
-    Maze maze;
-    InitMaze(maze);
-    NodeMaze start, end;//设定起始点和终点
-    start.c = 0;
-    start.r = 1;
-    end.c = 5;
-    end.r = 4;
-    MazePath(maze, start, end);
-}
-</code></pre><p>改程序演示如下<br><img src="/images/2-9result.png" alt="2-9result.png"></p>
-<p>你可以在 <code>void InitMaze(Maze &amp;maze)</code> 函数中改变迷宫进行尝试！</p>
+        <p>今天给大家介绍一下一个非常厉害的一个人脸识别库face_recognition.<br>这个项目的GitHub地址：<a href="https://github.com/ageitgey/face_recognition" target="_blank" rel="noopener">https://github.com/ageitgey/face_recognition</a><br>这是一个python的库，所以首先我们需要安装一下python.python的官网地址：<a href="https://www.python.org/" target="_blank" rel="noopener">https://www.python.org/</a><br>安装完python（随便记得把python加到路径中）。<br>接下来这一步比较麻烦了，由于face_recognition需要dlib库，这个库安装比较麻烦。<br>第一.我们需要装vs，推荐大家装vs2015.<br>第二.安装cmake，官网下载安装包：<a href="https://cmake.org/download/" target="_blank" rel="noopener">https://cmake.org/download/</a><br>第三.安装boost（这个需要记一下安装地址），下载地址：<a href="http://www.boost.org/" target="_blank" rel="noopener">http://www.boost.org/</a><br>都下载好之后我们就可以动手来安装dlib了。<br>首先找到vs2015的本机工具命令提示符工具<br><img src="/images/人脸识别--face_recognition的安装/1.png" alt="image1"><br>VS2015开发人员命令提示，可以在这里编Boost,是一个CMD窗口.cd 进入进入之前下载的Boost目录，执行bootstrap.bat<br>再在命令中输入b2 install<br>然后我们就可以利用b2编译库文件<br>在cmd中输入：<br>     b2 -a –with-python address-model=64 toolset=msvc runtime-link=static<br>之前你cmake下载的64位address-model这里写64，如果是32位的就把之前的64改成32<br>然后设置变量<br>　　 set BOOST_ROOT=C:\local\boost_1_63_0<br>　　 set BOOST_LIBRARYDIR=C:\local\boost_1_63_0\stage\lib<br>这里变量对应着你boost下载的目录<br>接下来我们就可以安装dlib了<br>下载dlib，解压，然后运行在dilb的目录下运行<br>     python setup.py install<br>最后我们就可以安装face_recognition了，我们只要在cmd中运行<br>     pip install face_recognition<br>pip就会自动帮你把其他face_recognition的依赖库都下载安装好。</p>
+<p>之后我们就可以在python中愉快的使用这个人脸识别库了！</p>
+<p>至于用法撒的，在项目的github上讲解的非常清楚了，我就不多啰嗦了。<br>下一次我就来介绍一下如何利用这个库做一下人脸评分。</p>
 
       
     </div>
@@ -422,7 +201,7 @@ int main()
       
         <div class="post-tags">
           
-            <a href="/tags/数据结构/"> #数据结构 </a>
+            <a href="/tags/人脸识别/"> #人脸识别 </a>
           
         </div>
       
@@ -431,13 +210,11 @@ int main()
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/11/29/算法之数的排序/">算法之数的排序</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/11/23/数据结构-实习1-6/">数据结构 实习1.6</a>
+              <a href="/2018/04/16/小日记/">小日记18.4.16</a>
             
           </div>
         </div>
@@ -537,7 +314,7 @@ int main()
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9迷宫问题"><span class="nav-number">1.</span> <span class="nav-text">2.9迷宫问题</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
